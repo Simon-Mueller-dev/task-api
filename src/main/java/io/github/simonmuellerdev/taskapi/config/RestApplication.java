@@ -1,9 +1,13 @@
 package io.github.simonmuellerdev.taskapi.config;
 
 import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.Application;
+import org.glassfish.jersey.server.ResourceConfig;
 
 @ApplicationPath("/api")
-public class RestApplication extends Application {
+public class RestApplication extends ResourceConfig {
+
+    public RestApplication() {
+        packages("io.github.simonmuellerdev.taskapi.resource");
+    }
 }
 
