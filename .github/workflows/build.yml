@@ -33,3 +33,12 @@ jobs:
           severity: HIGH,CRITICAL
           exit-code: '0'
 
+      - name: Run Trivy license scanner
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: license
+          license-full: true
+          exit-code: '0'
+
