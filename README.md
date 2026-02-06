@@ -33,7 +33,7 @@ This separation keeps the API clean and makes it easy to replace the in-memory s
 
 ## API Endpoints
 
-### GET /api/tasks
+### 🔹 GET /api/tasks
 Returns all tasks.
 
 **Response**
@@ -42,7 +42,7 @@ Returns all tasks.
 
 ---
 
-### POST /api/tasks
+### 🔹 POST /api/tasks
 Creates a new task.
 
 **Response**
@@ -59,7 +59,7 @@ Example request body:
 ```
 ---
 
-### PUT /api/tasks/{id}
+### 🔹 PUT /api/tasks/{id}
 Updates an existing task.
 
 **Response**
@@ -76,7 +76,7 @@ Example request body:
 ```
 ---
 
-### DELETE /api/tasks/{id}
+### 🔹 DELETE /api/tasks/{id}
 Deletes a task.
 
 **Response**
@@ -88,24 +88,24 @@ Deletes a task.
 
 ## Local Setup
 
-### Requirements
+### 🔹 Requirements
 - Java 17
 - Maven
 - Apache Tomcat 10
 
-### Build the project
+### 🔹 Build the project
 ```bash
 mvn clean package
 ```
 
-### Deploy the WAR to Tomcat
+### 🔹 Deploy the WAR to Tomcat
 Copy the generated WAR file from:
 ```
 target/task-api-1.0.0.war
 ```
 to the Tomcat /webapps/ folder.
 
-### Access the API
+### 🔹 Access the API
 Once Tomcat is running, the API can be accessed at:
 ```
 http://localhost:8080/task-api-1.0.0/api/tasks
@@ -115,26 +115,26 @@ http://localhost:8080/task-api-1.0.0/api/tasks
 
 ## Example Requests
 
-### Get all tasks
+### 🔹 Get all tasks
 ```bash
 curl http://localhost:8080/task-api-1.0.0/api/tasks
 ```
 
-### Create a new Task
+### 🔹 Create a new Task
 ```
 curl -X POST http://localhost:8080/task-api-1.0.0/api/tasks \
 -H "Content-Type: application/json" \
 -d '{"title":"New task","description":"Created via API","completed":false}'
 ```
 
-### Update an existing Task
+### 🔹 Update an existing Task
 ```
 curl -X PUT http://localhost:8080/task-api-1.0.0/api/tasks/1 \
 -H "Content-Type: application/json" \
 -d '{"title":"Updated task","description":"Updated via API","completed":true}'
 ```
 
-### Delete a Task
+### 🔹 Delete a Task
 ```
 curl -X DELETE http://localhost:8080/task-api-1.0.0/api/tasks/1
 ```

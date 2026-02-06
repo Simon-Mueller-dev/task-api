@@ -1,0 +1,10 @@
+Apache-2.0
+BSD-2-Clause
+BSD-3-Clause
+EPL-2.0
+GPL-2.0-with-classpath-exception
+LGPL-2.1-only
+MIT
+MPL-1.1
+Public Domain
+W3C
