@@ -182,6 +182,33 @@ The pipeline runs on every push and pull request to the `main` branch and consis
 - The scan is executed automatically in the CI pipeline and serves as an early license compliance check.
 - Any findings are reviewed and documented where necessary.
 
+---
+
+### 🤖 AI-Assisted Development
+
+This project was developed with the support of an AI coding assistant.
+
+AI was used to:
+
+- explore implementation approaches
+- validate design decisions
+- troubleshoot build and configuration issues
+- improve CI/CD setup and documentation
+
+All generated suggestions were reviewed, adapted, and integrated manually to ensure correctness and understanding.
+
+The final architecture, implementation decisions, and testing strategy were designed and verified by the developer.
+
+This workflow reflects modern software engineering practices where AI tools are used to enhance productivity while maintaining full developer ownership.
+
+
+### 🔹 AI Usage Principles
+
+- AI suggestions were treated as guidance, not authority
+- All code was reviewed and understood before integration
+- Security and license decisions were made manually
+
+---
 
 ### 📜 Dependency Licenses Overview
 
