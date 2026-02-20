@@ -143,6 +143,35 @@ curl -X DELETE http://localhost:8080/task-api-1.0.0/api/tasks/1
 
 ---
 
+## 🐳 Run with Docker
+
+The API can be executed inside a Docker container without requiring a local Java or Tomcat installation.
+
+### Build the application
+
+First, package the WAR file:
+
+```bash
+mvn clean package
+```
+
+### Build the Docker image
+
+```bash
+docker build -t task-api .
+```
+
+### Run the container
+
+```bash
+docker run -p 8080:8080 task-api
+```
+
+The API will be available at:
+
+http://localhost:8080/api/tasks
+
+---
 
 ## 🚀 CI/CD Pipeline
 
