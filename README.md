@@ -1,10 +1,19 @@
 # Task API
 
-A simple RESTful Task Management API built with Java, Jakarta REST (JAX-RS), Jersey and Apache Tomcat.
+A containerized RESTful API for managing tasks, built with Java, Jakarta EE, Maven, and Apache Tomcat.
 
-The project demonstrates the implementation of a CRUD-based REST API including proper HTTP methods, 
-status codes and JSON data handling. It is designed as a lightweight backend service and serves as a foundation
-for further extensions such as persistence, authentication or CI/CD integration.
+This project demonstrates modern backend engineering practices, including CI/CD automation, dependency vulnerability scanning, license compliance analysis, and Docker-based deployment.
+
+## Features
+
+- RESTful CRUD API
+- Layered architecture (Resource, Service, Model)
+- Unit testing for business logic
+- Maven-based build system
+- Docker containerization
+- CI/CD pipeline with GitHub Actions
+- Automated vulnerability scanning (Trivy)
+- Automated license compliance scanning
 
 
 ## Technology Stack
@@ -12,37 +21,40 @@ for further extensions such as persistence, authentication or CI/CD integration.
 - **Java 17**
 - **Jakarta EE 10**
 - **JAX-RS (Jakarta REST)**
-- **Jersey 3**
-- **Apache Tomcat 10**
+- **Jersey 3** (JAX-RS implementation)
+- **Apache Tomcat 10** (Servlet container)
 - **Maven** (build tool)
-- **JSON-Binding (Jersey JSON-Binding)**
-
+- **JSON-B (Jersey JSON-Binding)**
+- **Docker**
+- **GitHub Actions**
 
 ## Architecture & Structure
 
-The project follows a simple and clean layered structure:
+The project follows a clean, layered architecture:
 
-- **Model**: `Task` entity representing the data structure.
-- **Service**: `TaskService` contains business logic and in-memory storage.
+- **Model**: `Task` entity representing the domain object.
+- **Service**: `TaskService` contains business logic and in-memory data storage.
 - **Resource**: `TaskResource` defines REST endpoints (GET, POST, PUT, DELETE).
-- **Configuration**: `RestApplication` configures Jersey and the base API path.
+- **Configuration**: `RestApplication` configures Jersey and defining the base API path.
 
-This separation keeps the API clean and makes it easy to replace the in-memory storage with a database in the future.
+This separation ensures maintainability and allows future replacement of the in-memory storage with a persistent database without affecting the API layer.
+
+The application is packaged as a WAR file and deployed on Apache Tomcat.
 
 ---
 
 ## API Endpoints
 
-### 🔹 GET /api/tasks
+### GET /api/tasks
 Returns all tasks.
 
 **Response**
 - Status: `200 OK`
-- Body: JSON array of tasks
+- Body: JSON array of task objects
 
 ---
 
-### 🔹 POST /api/tasks
+### POST /api/tasks
 Creates a new task.
 
 **Response**
@@ -59,7 +71,7 @@ Example request body:
 ```
 ---
 
-### 🔹 PUT /api/tasks/{id}
+### PUT /api/tasks/{id}
 Updates an existing task.
 
 **Response**
@@ -76,7 +88,7 @@ Example request body:
 ```
 ---
 
-### 🔹 DELETE /api/tasks/{id}
+### DELETE /api/tasks/{id}
 Deletes a task.
 
 **Response**
@@ -88,53 +100,58 @@ Deletes a task.
 
 ## Local Setup
 
-### 🔹 Requirements
+### Requirements
 - Java 17
 - Maven
 - Apache Tomcat 10
 
-### 🔹 Build the project
+### Build the project
 ```bash
 mvn clean package
 ```
 
-### 🔹 Deploy the WAR to Tomcat
+### Deploy to Tomcat
 Copy the generated WAR file from:
-```
-target/task-api-1.0.0.war
-```
-to the Tomcat /webapps/ folder.
 
-### 🔹 Access the API
-Once Tomcat is running, the API can be accessed at:
+`target/task-api-1.0.0.war`
+
+to the Tomcat `webapps/` directory and start Tomcat.
+
+### Access the API
+When deployed directly as a WAR file, the application is accessible at:
 ```
 http://localhost:8080/task-api-1.0.0/api/tasks
+```
+When running via `Docker` (deployed as ROOT.war), the API is available at:
+```
+http://localhost:8080/api/tasks
 ```
 
 ---
 
 ## Example Requests
+The following examples use `curl` to interact with the API.
 
-### 🔹 Get all tasks
+### Get all tasks
 ```bash
 curl http://localhost:8080/task-api-1.0.0/api/tasks
 ```
 
-### 🔹 Create a new Task
+### Create a new Task
 ```
 curl -X POST http://localhost:8080/task-api-1.0.0/api/tasks \
 -H "Content-Type: application/json" \
 -d '{"title":"New task","description":"Created via API","completed":false}'
 ```
 
-### 🔹 Update an existing Task
+### Update an existing Task
 ```
 curl -X PUT http://localhost:8080/task-api-1.0.0/api/tasks/1 \
 -H "Content-Type: application/json" \
 -d '{"title":"Updated task","description":"Updated via API","completed":true}'
 ```
 
-### 🔹 Delete a Task
+### Delete a Task
 ```
 curl -X DELETE http://localhost:8080/task-api-1.0.0/api/tasks/1
 ```
@@ -143,7 +160,7 @@ curl -X DELETE http://localhost:8080/task-api-1.0.0/api/tasks/1
 
 ---
 
-## 🐳 Run with Docker
+## Run with Docker
 
 The API can be executed inside a Docker container without requiring a local Java or Tomcat installation.
 
@@ -167,21 +184,30 @@ docker build -t task-api .
 docker run -p 8080:8080 task-api
 ```
 
-The API will be available at:
+The application is deployed as `ROOT.war`, therefore the API is available at:
 
+```
 http://localhost:8080/api/tasks
+```
 
 ---
 
-## 🚀 CI/CD Pipeline
+## CI/CD Pipeline
 
-This project uses **GitHub Actions** to automate building, testing, and security checks.
+The project uses GitHub Actions for continuous integration and security automation.
 
-The pipeline runs on every push and pull request to the `main` branch and consists of the following stages:
+The pipeline runs on every push and pull request and performs:
+
+- Maven build
+- Unit test execution
+- Dependency vulnerability scanning (Trivy)
+- License compliance scanning (Trivy)
+
+This setup demonstrates DevSecOps practices by integrating automated security checks directly into the development workflow.
 
 ---
 
-### 🔹 Build & Test
+### Build & Test
 
 - The project is built using **Maven**.
 - Unit tests are executed automatically to validate core business logic (e.g. `TaskService`).
@@ -189,7 +215,7 @@ The pipeline runs on every push and pull request to the `main` branch and consis
 
 ---
 
-### 🔹 Vulnerability Scanning
+### Vulnerability Scanning
 
 - **Trivy Vulnerability Scanner** is used to detect known security vulnerabilities (CVEs) in project dependencies.
 - The scan runs automatically as part of the CI pipeline.
@@ -201,7 +227,7 @@ The pipeline runs on every push and pull request to the `main` branch and consis
 
 ---
 
-### 🔹 License Scanning
+### License Scanning
 
 - **Trivy License Scanner** is used to analyze open-source licenses of all project dependencies.
 - Each dependency is classified into categories such as:
@@ -213,25 +239,18 @@ The pipeline runs on every push and pull request to the `main` branch and consis
 
 ---
 
-### 🤖 AI-Assisted Development
+### AI-Assisted Development
 
 This project was developed with the support of an AI coding assistant.
 
-AI was used to:
+AI was used to explore implementation approaches, validate design decisions, troubleshoot configuration issues, and refine CI/CD and Docker setup.
 
-- explore implementation approaches
-- validate design decisions
-- troubleshoot build and configuration issues
-- improve CI/CD setup and documentation
+All architectural decisions and implementation details were designed, reviewed, and validated by the developer.
 
-All generated suggestions were reviewed, adapted, and integrated manually to ensure correctness and understanding.
-
-The final architecture, implementation decisions, and testing strategy were designed and verified by the developer.
-
-This workflow reflects modern software engineering practices where AI tools are used to enhance productivity while maintaining full developer ownership.
+AI suggestions were treated as guidance rather than authority, ensuring full understanding and ownership of the final solution.
 
 
-### 🔹 AI Usage Principles
+### AI Usage Principles
 
 - AI suggestions were treated as guidance, not authority
 - All code was reviewed and understood before integration
@@ -239,21 +258,19 @@ This workflow reflects modern software engineering practices where AI tools are 
 
 ---
 
-### 📜 Dependency Licenses Overview
+### Dependency Licenses Overview
 
-All project dependencies were scanned using the **Trivy License Scanner**.
+All project dependencies were scanned using the **Trivy** License Scanner.
 
 A deduplicated list of detected licenses is maintained in:
 
 ➡ **[`LICENSES_FOUND.txt`](LICENSES_FOUND.txt)**
 
-This file is generated from local scans and reviewed to ensure license transparency.
-
-Restricted licenses detected during scanning were evaluated and are acceptable for this non-commercial demo project.
+Restricted licenses detected during scanning were reviewed and are acceptable for this non-commercial demo project.
 
 ---
 
-### 🔹 Benefits
+### Benefits
 
 - Automated verification of build, tests, and security.
 - Early detection of vulnerabilities and license risks.
@@ -263,11 +280,12 @@ Restricted licenses detected during scanning were evaluated and are acceptable f
 
 ## Possible Improvements
 
-The project is intentionally kept simple. Possible next steps include:
+The project is intentionally kept simple. Potential next steps include:
 
-- Persisting tasks using a database (e.g. PostgreSQL, MySQL) with JPA/Hibernate
-- Adding validation and better error handling
-- Implementing authentication and authorization
-- Writing unit and integration tests
-- Adding CI/CD pipelines using GitHub Actions
-- Containerization with Docker
+- Persisting tasks using a database (e.g., PostgreSQL) with JPA/Hibernate
+- Adding request validation and improved error handling
+- Implementing authentication and authorization (JWT)
+- Expanding integration test coverage
+- Adding OpenAPI/Swagger documentation
+- Publishing the Docker image to a container registry
+- Extending the CI pipeline to build and scan the Docker image
