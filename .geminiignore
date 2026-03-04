@@ -1,0 +1,46 @@
+# --- 1. SICHERHEIT (Absolut kritisch) ---
+.env
+.env.local
+.env.*
+secrets.*
+credentials.json
+*.pem
+*.key
+.ssh/
+.aws/
+.gcloud/
+LICENSE
+
+# --- 2. NOISE & PERFORMANCE ---
+node_modules/          # Viel zu groß, Gemini verliert hier den Überblick
+bower_components/
+.git/                  # Die gesamte Git-Historie ist zu viel Text
+.svn/
+dist/                  # Kompilierter Code ist für die KI schwerer zu lesen als Quellcode
+build/
+out/
+target/
+.cache/
+trivy-licenses.json
+.idea/
+*.log
+*.class
+
+# --- 3. BINÄRDATEIEN ---
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.pdf
+*.zip
+*.tar.gz
+*.exe
+*.dll
+*.so
+
+# --- 4. IDE & SYSTEM ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

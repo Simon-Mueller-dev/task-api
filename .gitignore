@@ -12,6 +12,7 @@
 
 /target/
 /.idea/
+.env
 
 # Package Files #
 *.jar
