@@ -16,6 +16,9 @@ public class TaskService {
     public Collection<Task> getAllTasks() {
         return tasks.values();
     }
+    public Task getTaskById(long id) {
+        return tasks.get(id);
+        }
 
     // POST /tasks
     public Task createTask(Task task) {
