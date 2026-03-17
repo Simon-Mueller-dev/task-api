@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import io.github.simonmuellerdev.taskapi.exception.TaskNotFoundException;
 
 public class TaskService {
 
@@ -16,10 +17,18 @@ public class TaskService {
     public Collection<Task> getAllTasks() {
         return tasks.values();
     }
+
+    // GET /tasks/{id}
     public Task getTaskById(long id) {
-        return tasks.get(id);
+
+        Task task = tasks.get(id);
+
+        if (task == null) {
+            throw new TaskNotFoundException(id);
         }
 
+        return task;
+    }
     // POST /tasks
     public Task createTask(Task task) {
         long id = idGenerator.incrementAndGet();
@@ -33,7 +42,7 @@ public class TaskService {
         Task existing = tasks.get(id);
 
         if (existing == null) {
-            return null;
+            throw new TaskNotFoundException(id);
         }
 
         existing.setTitle(updatedTask.getTitle());
@@ -43,8 +52,14 @@ public class TaskService {
         return existing;
     }
 
-    public boolean deleteTask(long id) {
-        return tasks.remove(id) != null;
+    // DELETE /tasks/{id}
+    public void deleteTask(long id) {
+
+        Task removed = tasks.remove(id);
+
+        if (removed == null) {
+            throw new TaskNotFoundException(id);
+        }
     }
 
 }

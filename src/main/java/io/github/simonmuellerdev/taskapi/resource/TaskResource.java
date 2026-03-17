@@ -1,6 +1,8 @@
 package io.github.simonmuellerdev.taskapi.resource;
 
+import io.github.simonmuellerdev.taskapi.model.ErrorResponse;
 import io.github.simonmuellerdev.taskapi.model.Task;
+import io.github.simonmuellerdev.taskapi.model.ValidationErrorResponse;
 import io.github.simonmuellerdev.taskapi.service.TaskService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +24,7 @@ import java.util.Collection;
 public class TaskResource {
 
     private static final TaskService taskService = new TaskService();
+
     // GET /api/tasks
     @GET
     @Operation(
@@ -47,15 +50,15 @@ public class TaskResource {
     @Operation(summary = "Get task by ID", description = "Returns a single task by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Task found",
-            content = @Content(schema = @Schema(implementation = Task.class))),
-            @ApiResponse(responseCode = "404", description = "Task not found")
+                    content = @Content(schema = @Schema(implementation = Task.class))),
+            @ApiResponse(responseCode = "404", description = "Task not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid ID",
+                    content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class)))
     })
     public Response getTaskById(@PathParam("id") long id) {
-    Task task = taskService.getTaskById(id);
-    if (task == null) {
-        return Response.status(Response.Status.NOT_FOUND).build();
-        }
-    return Response.ok(task).build();
+        Task task = taskService.getTaskById(id);
+        return Response.ok(task).build();
     }
 
     // POST /api/tasks
@@ -63,8 +66,9 @@ public class TaskResource {
     @Operation(summary = "Create a new task")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Task created",
-            content = @Content(schema = @Schema(implementation = Task.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input")
+                    content = @Content(schema = @Schema(implementation = Task.class))),
+            @ApiResponse(responseCode = "400", description = "Validation failed",
+                    content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class)))
     })
     public Response createTask(@Valid Task task, @Context UriInfo uriInfo) {
         Task createdTask = taskService.createTask(task);
@@ -74,8 +78,8 @@ public class TaskResource {
         builder.path(Long.toString(createdTask.getId()));
 
         return Response.created(builder.build())
-            .entity(createdTask)
-            .build();
+                .entity(createdTask)
+                .build();
     }
 
     // PUT /api/tasks/{id}
@@ -91,11 +95,6 @@ public class TaskResource {
     })
     public Response updateTask(@PathParam("id") long id, @Valid Task task) {
         Task updated = taskService.updateTask(id, task);
-
-        if (updated == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
         return Response.ok(updated).build();
     }
 
@@ -107,15 +106,12 @@ public class TaskResource {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Task deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Task not found")
+            @ApiResponse(responseCode = "404", description = "Task not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)
+                    ))
     })
     public Response deleteTask(@PathParam("id") long id) {
-        boolean deleted = taskService.deleteTask(id);
-
-        if (!deleted) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
+        taskService.deleteTask(id);
         return Response.noContent().build();
     }
 
