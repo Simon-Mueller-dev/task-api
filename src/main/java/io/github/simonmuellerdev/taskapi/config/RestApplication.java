@@ -19,7 +19,11 @@ import io.swagger.v3.oas.annotations.info.Info;
 public class RestApplication extends ResourceConfig {
 
     public RestApplication() {
-        packages("io.github.simonmuellerdev.taskapi.resource");
+        packages("io.github.simonmuellerdev.taskapi.resource", "io.github.simonmuellerdev.taskapi.exception");
+
+        // Explicitly register validation support
+        register(org.glassfish.jersey.server.validation.ValidationFeature.class);
+
         // Register the Swagger/OpenAPI resources
         register(OpenApiResource.class);
         register(AcceptHeaderOpenApiResource.class);
