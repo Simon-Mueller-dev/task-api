@@ -1,291 +1,345 @@
-# Task API
+# 📝 Task Management API
 
-A containerized RESTful API for managing tasks, built with Java, Jakarta EE, Maven, and Apache Tomcat.
+A containerized RESTful Task Management API built with **Java 17**, **Jakarta EE 10**, and **JAX-RS (Jersey)**.
 
-This project demonstrates modern backend engineering practices, including CI/CD automation, dependency vulnerability scanning, license compliance analysis, and Docker-based deployment.
+This project demonstrates modern backend engineering and DevSecOps practices, including:
 
-## Features
+* OpenAPI 3.0 documentation with Swagger UI
+* Structured global error handling
+* Bean Validation for request validation
+* CI/CD automation with security scanning
+* Docker-based deployment
 
-- RESTful CRUD API
-- Layered architecture (Resource, Service, Model)
-- Unit testing for business logic
-- Maven-based build system
-- Docker containerization
-- CI/CD pipeline with GitHub Actions
-- Automated vulnerability scanning (Trivy)
-- Automated license compliance scanning
+---
 
+# 🚀 Features
 
-## Technology Stack
+* RESTful CRUD API
+* OpenAPI 3.0 with Swagger UI
+* Global error handling with structured JSON responses
+* Field-level validation (Bean Validation, JSR-380)
+* JSON error handling (malformed requests)
+* Clean layered architecture (Resource, Service, Model, Exception)
+* Unit testing for business logic
+* Docker containerization
+* CI/CD pipeline (GitHub Actions)
+* Vulnerability scanning (Trivy)
+* License compliance analysis
 
-- **Java 17**
-- **Jakarta EE 10**
-- **JAX-RS (Jakarta REST)**
-- **Jersey 3** (JAX-RS implementation)
-- **Apache Tomcat 10** (Servlet container)
-- **Maven** (build tool)
-- **JSON-B (Jersey JSON-Binding)**
-- **Docker**
-- **GitHub Actions**
+---
 
-## Architecture & Structure
+# 🛠️ Tech Stack
+
+* **Java 17**
+* **Jakarta EE 10**
+
+  * JAX-RS (Jersey)
+  * JSON-B
+  * Bean Validation
+* **Apache Tomcat 10**
+* **Maven**
+* **Swagger / OpenAPI 3.0**
+* **Docker**
+* **GitHub Actions**
+
+---
+
+# 📂 Architecture & Structure
 
 The project follows a clean, layered architecture:
 
-- **Model**: `Task` entity representing the domain object.
-- **Service**: `TaskService` contains business logic and in-memory data storage.
-- **Resource**: `TaskResource` defines REST endpoints (GET, POST, PUT, DELETE).
-- **Configuration**: `RestApplication` configures Jersey and defining the base API path.
+* **Model** → Domain objects (`Task`, `ErrorResponse`, `ValidationError`)
+* **Service** → Business logic (`TaskService`)
+* **Resource** → REST endpoints (`TaskResource`)
+* **Exception** → Centralized error handling via ExceptionMappers
+* **Configuration** → `RestApplication` for Jersey & OpenAPI setup
 
-This separation ensures maintainability and allows future replacement of the in-memory storage with a persistent database without affecting the API layer.
-
-The application is packaged as a WAR file and deployed on Apache Tomcat.
-
----
-
-## API Endpoints
-
-### GET /api/tasks
-Returns all tasks.
-
-**Response**
-- Status: `200 OK`
-- Body: JSON array of task objects
+This separation ensures maintainability and allows replacing the in-memory storage with a database without affecting the API layer.
 
 ---
 
-### POST /api/tasks
-Creates a new task.
+# 📖 API Documentation (Swagger UI)
 
-**Response**
-- Status: `201 Created`
-- Body: JSON object with task data
+Interactive API documentation is available:
 
-Example request body:
+### ▶️ Swagger UI
+
+```text
+http://localhost:8080/docs/index.html
+```
+
+### 📄 OpenAPI Specification
+
+* JSON: `/api/v1/openapi.json`
+* YAML: `/api/v1/openapi.yaml`
+
+---
+
+# 📌 API Endpoints
+
+| Method | Endpoint             | Description       |
+| ------ | -------------------- | ----------------- |
+| GET    | `/api/v1/tasks`      | Get all tasks     |
+| GET    | `/api/v1/tasks/{id}` | Get task by ID    |
+| POST   | `/api/v1/tasks`      | Create a new task |
+| PUT    | `/api/v1/tasks/{id}` | Update a task     |
+| DELETE | `/api/v1/tasks/{id}` | Delete a task     |
+
+---
+
+# ⚠️ Error Handling
+
+The API provides consistent, structured JSON error responses.
+
+## 🔹 Standard Error Response
+
 ```json
 {
-  "title": "New task",
-  "description": "Task description",
-  "completed": false
+  "status": 404,
+  "message": "Task not found",
+  "timestamp": "2026-03-17T12:00:00Z"
 }
 ```
+
 ---
 
-### PUT /api/tasks/{id}
-Updates an existing task.
+## 🔹 Validation Error Response
 
-**Response**
-- Status: `200 OK` if updated
-- Status: `404 Not Found` if task does not exist
-
-Example request body:
 ```json
 {
-  "title": "Updated task",
-  "description": "Updated description",
-  "completed": true
+  "status": 400,
+  "message": "Validation failed",
+  "timestamp": "2026-03-17T12:00:00Z",
+  "errors": [
+    {
+      "field": "title",
+      "message": "must not be blank"
+    }
+  ]
 }
 ```
----
-
-### DELETE /api/tasks/{id}
-Deletes a task.
-
-**Response**
-- Status: `204 No Content` if deleted
-- Status: `404 Not Found` if task does not exist
 
 ---
 
+## 🔹 Invalid JSON Request
 
-## Local Setup
-
-### Requirements
-- Java 17
-- Maven
-- Apache Tomcat 10
-
-### Build the project
-```bash
-mvn clean package
-```
-
-### Deploy to Tomcat
-Copy the generated WAR file from:
-
-`target/task-api-1.0.0.war`
-
-to the Tomcat `webapps/` directory and start Tomcat.
-
-### Access the API
-When deployed directly as a WAR file, the application is accessible at:
-```
-http://localhost:8080/task-api-1.0.0/api/tasks
-```
-When running via `Docker` (deployed as ROOT.war), the API is available at:
-```
-http://localhost:8080/api/tasks
+```json
+{
+  "status": 400,
+  "message": "Invalid JSON format",
+  "timestamp": "2026-03-17T12:00:00Z"
+}
 ```
 
 ---
 
-## Example Requests
-The following examples use `curl` to interact with the API.
+## 🔹 Internal Server Error
+
+```json
+{
+  "status": 500,
+  "message": "An internal server error occurred",
+  "timestamp": "2026-03-17T12:00:00Z"
+}
+```
+
+---
+
+## 🧠 Error Handling Architecture
+
+| Mapper                             | Responsibility                 |
+| ---------------------------------- | ------------------------------ |
+| GlobalExceptionMapper              | Fallback for unexpected errors |
+| ConstraintViolationExceptionMapper | Bean Validation errors         |
+| ProcessingExceptionMapper          | Malformed JSON requests        |
+| TaskNotFoundExceptionMapper        | Domain-specific errors         |
+
+---
+
+# 🧪 Example Requests
+
+> 💡 **Tip:**  
+> The following examples use `curl` for demonstration purposes.  
+> For a more interactive experience, you can explore and test all endpoints via Swagger UI:  
+> http://localhost:8080/docs/index.html
 
 ### Get all tasks
+
 ```bash
-curl http://localhost:8080/task-api-1.0.0/api/tasks
+curl http://localhost:8080/api/v1/tasks
 ```
 
-### Create a new Task
-```
-curl -X POST http://localhost:8080/task-api-1.0.0/api/tasks \
+---
+
+### Create a task
+
+```bash
+curl -X POST http://localhost:8080/api/v1/tasks \
 -H "Content-Type: application/json" \
 -d '{"title":"New task","description":"Created via API","completed":false}'
 ```
 
-### Update an existing Task
-```
-curl -X PUT http://localhost:8080/task-api-1.0.0/api/tasks/1 \
+---
+
+### Update a task
+
+```bash
+curl -X PUT http://localhost:8080/api/v1/tasks/1 \
 -H "Content-Type: application/json" \
--d '{"title":"Updated task","description":"Updated via API","completed":true}'
+-d '{"title":"Updated task","description":"Updated","completed":true}'
 ```
-
-### Delete a Task
-```
-curl -X DELETE http://localhost:8080/task-api-1.0.0/api/tasks/1
-```
-
-**Note:** On Windows (PowerShell or CMD), the curl commands may need to be written in a single line.    
 
 ---
 
-## Run with Docker
+### Delete a task
 
-The API can be executed inside a Docker container without requiring a local Java or Tomcat installation.
+```bash
+curl -X DELETE http://localhost:8080/api/v1/tasks/1
+```
 
-### Build the application
+---
 
-First, package the WAR file:
+# ▶️ Local Setup
+
+## Requirements
+
+* Java 17
+* Maven
+* Apache Tomcat 10
+
+---
+
+## Build the project
 
 ```bash
 mvn clean package
 ```
 
-### Build the Docker image
+---
+
+## Deploy to Tomcat
+
+Copy the WAR file:
+
+```text
+target/task-api-1.0.0.war
+```
+
+to:
+
+```text
+Tomcat /webapps/
+```
+
+---
+
+## Access the API
+
+When deployed as WAR:
+
+```text
+http://localhost:8080/api/v1/tasks
+```
+
+---
+
+# 🐳 Run with Docker
+
+The API can run inside a container without local Java/Tomcat setup.
+
+## Build image
 
 ```bash
 docker build -t task-api .
 ```
 
-### Run the container
+---
+
+## Run container
 
 ```bash
 docker run -p 8080:8080 task-api
 ```
 
-The application is deployed as `ROOT.war`, therefore the API is available at:
+---
 
+## Access API (Docker)
+
+```text
+http://localhost:8080/api/v1/tasks
 ```
-http://localhost:8080/api/tasks
+
+---
+
+# ⚙️ CI/CD Pipeline
+
+The project uses GitHub Actions.
+
+Runs on every push:
+
+* Maven build
+* Unit tests
+* Dependency vulnerability scanning (Trivy)
+* License compliance scanning (Trivy)
+
+---
+
+# 🔐 Security & License Scanning
+
+* Detects known CVEs in dependencies
+* Analyzes open-source licenses
+* Results are reviewed manually
+
+Example finding:
+
+* `org.eclipse.parsson:parsson` (CVE-2023-7272)
+  → evaluated as low risk for this project
+
+---
+
+# 🧪 Running Tests
+
+```bash
+mvn test
 ```
 
 ---
 
-## CI/CD Pipeline
+# 🧠 AI-Assisted Development
 
-The project uses GitHub Actions for continuous integration and security automation.
+AI was used as a development assistant throughout this project.
 
-The pipeline runs on every push and pull request and performs:
+In particular, the **Gemini CLI** was used as a coding agent directly within the development workflow to:
 
-- Maven build
-- Unit test execution
-- Dependency vulnerability scanning (Trivy)
-- License compliance scanning (Trivy)
+- explore implementation approaches
+- assist with API design and error handling strategies
+- debug configuration and runtime issues
+- refine architecture and best practices
 
-This setup demonstrates DevSecOps practices by integrating automated security checks directly into the development workflow.
+The AI was integrated as a **tool within the development process**, not as a replacement for understanding.
 
----
+All generated suggestions were:
 
-### Build & Test
+- critically reviewed
+- manually validated
+- adapted to fit the project architecture
 
-- The project is built using **Maven**.
-- Unit tests are executed automatically to validate core business logic (e.g. `TaskService`).
-- The pipeline ensures that only working and tested code is merged.
-
----
-
-### Vulnerability Scanning
-
-- **Trivy Vulnerability Scanner** is used to detect known security vulnerabilities (CVEs) in project dependencies.
-- The scan runs automatically as part of the CI pipeline.
-- Vulnerabilities are reported for visibility but do not fail the build for this demo project.
-
-**Known finding:**
-- A vulnerability in the transitive dependency `org.eclipse.parsson:parsson` (CVE-2023-7272) was detected.
-- This issue was reviewed and classified as low risk for this project.
+This ensured full ownership, correctness, and maintainability of the final implementation.
 
 ---
 
-### License Scanning
+# 🚀 Future Improvements
 
-- **Trivy License Scanner** is used to analyze open-source licenses of all project dependencies.
-- Each dependency is classified into categories such as:
-    - **Allowed** – permissive licenses (e.g. MIT, Apache 2.0)
-    - **Restricted** – licenses with additional conditions (e.g. GPL, LGPL)
-    - **Forbidden** – incompatible licenses
-- The scan is executed automatically in the CI pipeline and serves as an early license compliance check.
-- Any findings are reviewed and documented where necessary.
-
----
-
-### AI-Assisted Development
-
-This project was developed with the support of an AI coding assistant.
-
-AI was used to explore implementation approaches, validate design decisions, troubleshoot configuration issues, and refine CI/CD and Docker setup.
-
-All architectural decisions and implementation details were designed, reviewed, and validated by the developer.
-
-AI suggestions were treated as guidance rather than authority, ensuring full understanding and ownership of the final solution.
-
-
-### AI Usage Principles
-
-- AI suggestions were treated as guidance, not authority
-- All code was reviewed and understood before integration
-- Security and license decisions were made manually
+* Database integration (JPA + PostgreSQL/H2)
+* Pagination & filtering
+* Authentication (JWT)
+* Integration tests (Jersey Test Framework)
+* Logging with request correlation IDs
+* Docker image publishing
 
 ---
 
-### Dependency Licenses Overview
 
-All project dependencies were scanned using the **Trivy** License Scanner.
+# 📜 License
 
-A deduplicated list of detected licenses is maintained in:
-
-➡ **[`LICENSES_FOUND.txt`](LICENSES_FOUND.txt)**
-
-Restricted licenses detected during scanning were reviewed and are acceptable for this non-commercial demo project.
-
----
-
-### Benefits
-
-- Automated verification of build, tests, and security.
-- Early detection of vulnerabilities and license risks.
-- Demonstrates **DevSecOps best practices** in a modern CI/CD workflow.
-
-
-
-## Possible Improvements
-
-The project is intentionally kept simple. Potential next steps include:
-
-- Persisting tasks using a database (e.g., PostgreSQL) with JPA/Hibernate
-- Adding request validation and improved error handling
-- Implementing authentication and authorization (JWT)
-- Expanding integration test coverage
-- Adding OpenAPI/Swagger documentation
-- Publishing the Docker image to a container registry
-- Extending the CI pipeline to build and scan the Docker image
+This project is licensed under the MIT License.
