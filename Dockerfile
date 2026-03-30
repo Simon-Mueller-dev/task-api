@@ -1,11 +1,11 @@
-# Use official Tomcat image with Java 17
-FROM tomcat:10.1-jdk17-temurin
+# Use official Tomcat image with Java 25
+FROM tomcat:10.1-jdk25-temurin
 
 # Remove default Tomcat webapps (clean container)
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Copy built WAR into Tomcat ROOT context
-COPY target/task-api-1.0.0.war /usr/local/tomcat/webapps/ROOT.war
+COPY target/task-api-1.1.0.war /usr/local/tomcat/webapps/ROOT.war
 
 # Document container port
 EXPOSE 8080
