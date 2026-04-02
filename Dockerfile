@@ -4,8 +4,9 @@ FROM tomcat:10.1-jdk25-temurin
 # Remove default Tomcat webapps (clean container)
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copy built WAR into Tomcat ROOT context
-COPY target/task-api-1.2.0.war /usr/local/tomcat/webapps/ROOT.war
+ARG WAR_FILE=target/task-api-*.war
+
+COPY ${WAR_FILE} /usr/local/tomcat/webapps/ROOT.war
 
 # Document container port
 EXPOSE 8080

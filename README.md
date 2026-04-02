@@ -30,7 +30,7 @@ This project demonstrates modern backend engineering and DevSecOps practices, in
 
 # 🛠️ Tech Stack
 
-* **Java 17**
+* **Java 25**
 * **Jakarta EE 10**
 
   * JAX-RS (Jersey)
@@ -203,7 +203,7 @@ curl -X DELETE http://localhost:8080/api/v1/tasks/1
 
 ## Requirements
 
-* Java 17
+* Java 25
 * Maven
 * Apache Tomcat 10
 
@@ -219,10 +219,12 @@ mvn clean package
 
 ## Deploy to Tomcat
 
+Replace (version) with your deployed version, e.g. task-api-1.2.1.
+
 Copy the WAR file:
 
 ```text
-target/task-api-1.0.0.war
+target/task-api-(version).war
 ```
 
 to:
@@ -330,6 +332,7 @@ This ensured full ownership, correctness, and maintainability of the final imple
 
 # 🚀 Future Improvements
 
+* Evaluate Spring Boot as an alternative to Jakarta EE for future development 
 * Database integration (JPA + PostgreSQL/H2)
 * Pagination & filtering
 * Authentication (JWT)
